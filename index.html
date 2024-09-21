@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaussian Splats 3D Converter</title>
+</head>
+<body>
+    <script type="module">
+        import * as GaussianSplats3D from '@mkkellogg/gaussian-splats-3d';
+
+        const compressionLevel = 1;
+        const splatAlphaRemovalThreshold = 5; // out of 255
+        const sphericalHarmonicsDegree = 3;
+
+        const onProgress = (progress) => {
+            console.log(`Loading progress: ${progress * 100}%`);
+        };
+
+        const onProgressiveLoadSectionProgress = (progress) => {
+            console.log(`Progressive load section progress: ${progress * 100}%`);
+        };
+
+        GaussianSplats3D.PlyLoader.loadFromURL(
+            'https://raw.githubusercontent.com/Dogway/LoadGS/main/Angel%20Guimera%20cropped.ply',
+            onProgress,
+            true, // progressiveLoad
+            onProgressiveLoadSectionProgress,
+            splatAlphaRemovalThreshold,
+            compressionLevel,
+            true, // optimizeSplatData
+            sphericalHarmonicsDegree
+        )
+        .then((splatBuffer) => {
+            GaussianSplats3D.KSplatLoader.downloadFile(splatBuffer, 'converted_file.ksplat');
+        })
+        .catch((error) => {
+            console.error('Error loading or converting file:', error);
+        });
+    </script>
+</body>
+</html>
